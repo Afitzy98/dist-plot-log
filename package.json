@@ -1,6 +1,6 @@
 {
   "name": "dist-plot-log",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "simple tool for plotting a distribution of data to the CLI",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
