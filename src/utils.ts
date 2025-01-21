@@ -66,7 +66,11 @@ export function widenData(data: number[], factor: number = 1): number[] {
  * @returns The resampled data array.
  */
 function resampleData(data: number[], targetLength: number): number[] {
+  // If there is no data or the target length is too short, return a copy of data.
+  if (!data || data.length === 0) return [];
+  if (targetLength < 2) return data.slice();
   if (data.length === targetLength) return data;
+
   const resampled: number[] = [];
   const scale = (data.length - 1) / (targetLength - 1);
   for (let i = 0; i < targetLength; i++) {
@@ -93,6 +97,11 @@ function resampleData(data: number[], targetLength: number): number[] {
  * @returns An object containing binCenters, estimated pdf values, and the overall x-range.
  */
 export function estimatePDF(data: number[], numBins?: number): PDFEstimation {
+  // Check for empty data input.
+  if (!data || data.length === 0) {
+    return { binCenters: [], pdf: [], xMin: 0, xMax: 0 };
+  }
+
   const isDiscrete: boolean = data.every((v) => Number.isInteger(v));
   let dataMin = Math.min(...data);
   let dataMax = Math.max(...data);
@@ -127,10 +136,10 @@ export function estimatePDF(data: number[], numBins?: number): PDFEstimation {
   // Smooth the PDF for better visual appearance.
   pdf = smooth(pdf, 3);
 
-  // Compute bin centers (to be used as x-axis tick marks).
+  // Compute bin centers without adding any extra offset.
   const binCenters: number[] = Array.from(
     { length: numBins },
-    (_, i) => dataMin + (i + 0.5) * binWidth
+    (_, i) => dataMin + i * binWidth
   );
 
   return { binCenters, pdf, xMin: dataMin, xMax: dataMax };

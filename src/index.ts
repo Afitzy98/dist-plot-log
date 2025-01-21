@@ -12,7 +12,6 @@ export function logDistributionPlot(
 ): void {
   console.log("\n" + title + "\n");
   const { pdf, xMin, xMax } = estimatePDF(rawData);
-
   // Directly use xMin and xMax from estimatePDF for labeling.
   plotWithXAxis(pdf, xMin, xMax, { xLabelOffset: 11 });
 }
