@@ -56,7 +56,7 @@ describe("logDistributionPlot", () => {
 
     // Use sample raw data for the full flow.
     const data = [1, 2, 3, 4, 5, 3, 2, 1];
-    logDistributionPlot(data, "Test Title", 2);
+    logDistributionPlot(data, "Test Title");
 
     // The function should log at least: a title, the chart, and x-axis labels.
     // Check that at least one of the logs contains the title.

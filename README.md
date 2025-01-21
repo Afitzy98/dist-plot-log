@@ -22,8 +22,7 @@ You can use the package in both JavaScript and TypeScript projects.
 import { logDistributionPlot } from "dist-plot-log";
 
 const data = [1, 2, 3, 4, 5, 3, 2, 1];
-const optionalWidenFactor = 4;
-logDistributionPlot(data, "My Data Plot", optionalWidenFactor);
+logDistributionPlot(data, "My Data Plot");
 ```
 
 ### JavaScript
@@ -32,15 +31,13 @@ logDistributionPlot(data, "My Data Plot", optionalWidenFactor);
 const { logDistributionPlot } = require("dist-plot-log");
 
 const data = [1, 2, 3, 4, 5, 3, 2, 1];
-const optionalWidenFactor = 4;
-logDistributionPlot(data, "My Data Plot", optionalWidenFactor);
+logDistributionPlot(data, "My Data Plot");
 ```
 
 In the above examples:
 
 - The first argument is an array of numerical data.
 - The second argument is an optional title for the plot.
-- The third argument is an optional widen factor to control the chart's width.
 
 ## Development
 

@@ -159,8 +159,8 @@ export function plotWithXAxis(
   // Resample the data to a fixed number of columns.
   const resampledData = resampleData(dataValues, fixedWidth);
 
-  // Set fixed y-axis limits for a tighter plot.
-  const yMax: number = Math.max(...resampledData) * 1.05;
+  // Set fixed y-axis limits without additional scaling.
+  const yMax = Math.max(...resampledData);
   const plotOptions = Object.assign(
     {
       height: 15,
