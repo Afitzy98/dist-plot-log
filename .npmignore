@@ -1,0 +1,14 @@
+# Ignore source files (the compiled output in the 'dist' folder is published)
+src/
+
+# Ignore test files and directories
+__tests__/
+
+# Ignore git and GitHub configuration directories
+.git/
+.github/
+
+# Ignore local configuration and log files
+*.log
+tsconfig.json
+jest.config.js
