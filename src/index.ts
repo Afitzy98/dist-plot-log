@@ -12,7 +12,7 @@ import { smooth, widenData } from "./utils";
  * @param numBins - Number of bins for the histogram (optional).
  * @returns An object containing binCenters, estimated pdf values, and the overall x-range.
  */
-export function estimatePDF(data: number[], numBins?: number): PDFEstimation {
+function estimatePDF(data: number[], numBins?: number): PDFEstimation {
   const isDiscrete: boolean = data.every((v) => Number.isInteger(v));
   let dataMin = Math.min(...data);
   let dataMax = Math.max(...data);
@@ -66,7 +66,7 @@ export function estimatePDF(data: number[], numBins?: number): PDFEstimation {
  * @param xMax - The maximum x value for labeling.
  * @param options - Additional options for asciichart.
  */
-export function plotWithXAxis(
+function plotWithXAxis(
   dataValues: number[],
   xMin: number,
   xMax: number,
