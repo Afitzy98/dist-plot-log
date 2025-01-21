@@ -25,6 +25,6 @@ export function logDistributionPlot(
   const xAxisMin = widenedBinCenters[0];
   const xAxisMax = widenedBinCenters[widenedBinCenters.length - 1];
 
-  // Pass the xLabelOffset parameter (adjust as needed) via options.
+  // Pass the xLabelOffset parameter via options.
   plotWithXAxis(widenedPdf, xAxisMin, xAxisMax, { xLabelOffset: 10 });
 }

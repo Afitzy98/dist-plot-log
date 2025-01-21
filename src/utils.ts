@@ -1,5 +1,4 @@
 import * as asciichart from "asciichart";
-
 import { AsciiChartOptions, PDFEstimation } from "./types";
 
 /**
@@ -38,7 +37,7 @@ export function smooth(arr: number[], window: number = 1): number[] {
  * For a widening factor F, F-1 interpolated values are inserted between each pair.
  *
  * @param data - Original data array.
- * @param factor - Widening factor (must be >= 1). For example, factor=4 quadruples the length.
+ * @param factor - Widening factor (must be >= 1).
  * @returns The widened data array.
  */
 export function widenData(data: number[], factor: number = 1): number[] {
@@ -57,6 +56,31 @@ export function widenData(data: number[], factor: number = 1): number[] {
   }
   widened.push(data[data.length - 1]);
   return widened;
+}
+
+/**
+ * Resample (or interpolate) an array of numbers to a target length.
+ *
+ * @param data - The original data array.
+ * @param targetLength - The desired number of data points.
+ * @returns The resampled data array.
+ */
+function resampleData(data: number[], targetLength: number): number[] {
+  if (data.length === targetLength) return data;
+  const resampled: number[] = [];
+  const scale = (data.length - 1) / (targetLength - 1);
+  for (let i = 0; i < targetLength; i++) {
+    const pos = i * scale;
+    const low = Math.floor(pos);
+    const high = Math.ceil(pos);
+    if (low === high) {
+      resampled.push(data[low]);
+    } else {
+      const weight = pos - low;
+      resampled.push(data[low] * (1 - weight) + data[high] * weight);
+    }
+  }
+  return resampled;
 }
 
 /**
@@ -115,12 +139,14 @@ export function estimatePDF(data: number[], numBins?: number): PDFEstimation {
 /**
  * Plot an array of y-values using asciichart with custom x-axis labels.
  *
- * An optional xLabelOffset (number of spaces) can be provided via options to shift the left x-axis label.
+ * This version re-samples the data to a fixed width (e.g. 80 columns) so that the
+ * plot always fits within most console windows. It then obtains the printed chart width,
+ * and builds the x-axis label line using a character array for fine control over label placement.
  *
  * @param dataValues - The y-values (e.g., estimated PDF values).
  * @param xMin - The minimum x value for labeling.
  * @param xMax - The maximum x value for labeling.
- * @param options - Additional options for asciichart.
+ * @param options - Additional options for asciichart (e.g., xLabelOffset).
  */
 export function plotWithXAxis(
   dataValues: number[],
@@ -128,8 +154,13 @@ export function plotWithXAxis(
   xMax: number,
   options: AsciiChartOptions = {}
 ): void {
+  // Set a fixed width for resampling.
+  const fixedWidth = 80;
+  // Resample the data to a fixed number of columns.
+  const resampledData = resampleData(dataValues, fixedWidth);
+
   // Set fixed y-axis limits for a tighter plot.
-  const yMax: number = Math.max(...dataValues) * 1.05;
+  const yMax: number = Math.max(...resampledData) * 1.05;
   const plotOptions = Object.assign(
     {
       height: 15,
@@ -139,23 +170,38 @@ export function plotWithXAxis(
     options
   );
 
-  // Create and display the plot.
-  const chart = asciichart.plot(dataValues, plotOptions);
+  // Create the plot using the resampled data.
+  const chart = asciichart.plot(resampledData, plotOptions);
   console.log(chart);
 
-  // Determine the width of the chart.
+  // Compute the actual chart width based on the printed output.
   const chartLines = chart.split("\n");
   const chartWidth = Math.max(...chartLines.map((line) => line.length));
 
-  // Use the xLabelOffset option (defaulting to 0) to add extra spaces before the left label.
-  const xLabelOffset: number = options.xLabelOffset || 0;
+  // Build the x-axis label line using a character array.
+  let labelArr: string[] = new Array(chartWidth).fill(" ");
 
-  // Build an x-axis label line.
-  const leftLabel = " ".repeat(xLabelOffset) + xMin.toFixed(1);
-  const rightLabel = xMax.toFixed(1);
-  let labelLine = " ".repeat(chartWidth);
-  labelLine = leftLabel + labelLine.slice(leftLabel.length);
-  const rightStart = chartWidth - rightLabel.length;
-  labelLine = labelLine.slice(0, rightStart) + rightLabel;
-  console.log(labelLine);
+  // Insert the left label (xMin) at the specified xLabelOffset (or 0 if not provided).
+  const leftLabelStr = xMin.toFixed(1);
+  const xLabelOffset = options.xLabelOffset || 0;
+  for (
+    let i = 0;
+    i < leftLabelStr.length && i + xLabelOffset < chartWidth;
+    i++
+  ) {
+    labelArr[i + xLabelOffset] = leftLabelStr[i];
+  }
+
+  // Insert the right label (xMax) so that it ends at the rightmost position.
+  const rightLabelStr = xMax.toFixed(1);
+  const rightStart = chartWidth - rightLabelStr.length;
+  for (
+    let i = 0;
+    i < rightLabelStr.length && rightStart + i < chartWidth;
+    i++
+  ) {
+    labelArr[rightStart + i] = rightLabelStr[i];
+  }
+
+  console.log(labelArr.join(""));
 }

@@ -1,4 +1,5 @@
-import { estimatePDF, plotWithXAxis, logDistributionPlot } from "..";
+import { logDistributionPlot } from "..";
+import { estimatePDF, plotWithXAxis } from "../utils";
 
 describe("estimatePDF", () => {
   it("should estimate PDF for a discrete dataset", () => {
